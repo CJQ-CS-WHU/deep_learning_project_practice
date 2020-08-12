@@ -9,7 +9,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 
-device = torch.device('cuda:0,1,2,3,4,5,6,7' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0,1' if torch.cuda.is_available() else 'cpu')
 print(device)
 
 # 数据预处理字典
@@ -79,7 +79,7 @@ optimizer = optim.Adam(net.parameters(), lr=0.0002)
 print("优化器", optimizer)
 save_path = './AlexNet.pth'
 best_acc = 0.0
-for epoch in range(10):
+for epoch in range(1):
     # 切换到训练状态（dropout启动）
     net.train()
     running_loss = 0.0
@@ -87,7 +87,6 @@ for epoch in range(10):
     for step, data in enumerate(train_loader, start=0):
         images, labels = data
         optimizer.zero_grad()
-        images.to(device)
         outputs = net(images.to(device))
         loss = loss_function(outputs, labels.to(device))
         loss.backward()
@@ -102,11 +101,11 @@ for epoch in range(10):
 
     net.eval()
     acc = 0.0
+    save_path = './weight/AlexNet.pth'
     with torch.no_grad():
-        for data_test in validate_dataset:
+        for data_test in val_loader:
             test_images, test_labels = data_test
             outputs = net(test_images.to(device))
-            print(torch.max(outputs, dim=1))
             predict_y = torch.max(outputs, dim=1)[1]
         accurate_test = acc / val_num
         if accurate_test > best_acc:
