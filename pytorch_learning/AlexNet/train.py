@@ -77,7 +77,7 @@ loss_function = nn.CrossEntropyLoss()
 print("损失函数", loss_function)
 optimizer = optim.Adam(net.parameters(), lr=0.0002)
 print("优化器", optimizer)
-save_path = './AlexNet.pth'
+save_path = './weight/AlexNet.pth'
 best_acc = 0.0
 for epoch in range(1):
     # 切换到训练状态（dropout启动）
@@ -101,14 +101,13 @@ for epoch in range(1):
 
     net.eval()
     acc = 0.0
-    save_path = './weight/AlexNet.pth'
     with torch.no_grad():
         for data_test in val_loader:
             test_images, test_labels = data_test
             outputs = net(test_images.to(device))
             predict_y = torch.max(outputs, dim=1)[1]
         accurate_test = acc / val_num
-        if accurate_test > best_acc:
+        if accurate_test >= best_acc:
             best_acc = accurate_test
             torch.save(net.state_dict(), save_path)
         print('[epoch %d] train_loss: %.3f test_accuracy: %.3f'
