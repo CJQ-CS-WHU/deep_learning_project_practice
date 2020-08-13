@@ -37,6 +37,7 @@ def vgg(model_name='vgg16', **kwargs):
     model = VGG(make_features(cfg), **kwargs)
     return model
 
+
 # VGG类
 class VGG(nn.Module):
     def __init__(self, features, class_num=1000, init_weights=False):

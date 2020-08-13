@@ -95,7 +95,8 @@ for epoch in range(1):
         rate = (step + 1) / len(train_loader)
         a = '*' * int(rate * 50)
         b = '.' * int((1 - rate) * 50)
-        print("\rtrain loss:{:^3.0f}%[{}->{}]{:.3f}".format(int(rate * 100), a, b, loss), end="")
+        print("\repoch:{}:{:^3.0f}%[{}->{}] train loss:{:.3f}".format(epoch, int(rate * 100), a, b, running_loss),
+              end="")
     print()
     print('cost time:', time.perf_counter() - t1)
 
@@ -106,8 +107,9 @@ for epoch in range(1):
             test_images, test_labels = data_test
             outputs = net(test_images.to(device))
             predict_y = torch.max(outputs, dim=1)[1]
+            acc += (predict_y == test_labels).sum().item()
         accurate_test = acc / val_num
-        if accurate_test >= best_acc:
+        if accurate_test > best_acc:
             best_acc = accurate_test
             torch.save(net.state_dict(), save_path)
         print('[epoch %d] train_loss: %.3f test_accuracy: %.3f'
